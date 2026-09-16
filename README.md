@@ -2,6 +2,8 @@
 
 A full-stack platform for discovering campus events, registering for events, and managing student participation. 
 
+**Live Platform URL:** [https://campus-connect-seven-pi.vercel.app](https://campus-connect-seven-pi.vercel.app)
+
 ## Features
 - **Student Portal**: Students can register, login, browse upcoming events, and register/cancel registrations.
 - **Organizer Portal**: Organizers can create new events, view their created events, and cancel them.
