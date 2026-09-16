@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function Dashboard({ user }) {
   const [events, setEvents] = useState([]);
   const [myEvents, setMyEvents] = useState([]);
@@ -15,8 +17,8 @@ export default function Dashboard({ user }) {
     
     try {
       const [allEventsRes, myEventsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/events'),
-        axios.get('http://localhost:5000/api/users/me/events', { headers })
+        axios.get(`${API_URL}/api/events`),
+        axios.get(`${API_URL}/api/users/me/events`, { headers })
       ]);
       setEvents(allEventsRes.data);
       setMyEvents(myEventsRes.data.map(e => e._id));
@@ -28,7 +30,7 @@ export default function Dashboard({ user }) {
   const handleRegister = async (eventId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.post(`http://localhost:5000/api/events/${eventId}/register`, {}, {
+      await axios.post(`${API_URL}/api/events/${eventId}/register`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData(); // refresh
@@ -40,7 +42,7 @@ export default function Dashboard({ user }) {
   const handleCancel = async (eventId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/api/events/${eventId}/register`, {
+      await axios.delete(`${API_URL}/api/events/${eventId}/register`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchData();

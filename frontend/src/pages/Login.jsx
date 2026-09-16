@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function Login({ setUser }) {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'student' });
@@ -10,14 +12,14 @@ export default function Login({ setUser }) {
     e.preventDefault();
     try {
       if (isLogin) {
-        const { data } = await axios.post('http://localhost:5000/api/auth/login', {
+        const { data } = await axios.post(`${API_URL}/api/auth/login`, {
           email: formData.email, password: formData.password
         });
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         setUser(data.user);
       } else {
-        await axios.post('http://localhost:5000/api/auth/register', formData);
+        await axios.post(`${API_URL}/api/auth/register`, formData);
         setIsLogin(true);
         setError('Registration successful! Please login.');
       }

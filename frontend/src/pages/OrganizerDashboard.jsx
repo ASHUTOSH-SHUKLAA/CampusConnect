@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function OrganizerDashboard({ user }) {
   const [events, setEvents] = useState([]);
   const [formData, setFormData] = useState({ title: '', description: '', date: '', capacity: '' });
@@ -11,7 +13,7 @@ export default function OrganizerDashboard({ user }) {
 
   const fetchEvents = async () => {
     try {
-      const { data } = await axios.get('http://localhost:5000/api/events');
+      const { data } = await axios.get(`${API_URL}/api/events`);
       setEvents(data.filter(e => e.organizer?._id === user.id || e.organizer === user.id));
     } catch (err) {
       console.error(err);
@@ -22,7 +24,7 @@ export default function OrganizerDashboard({ user }) {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      await axios.post('http://localhost:5000/api/events', formData, {
+      await axios.post(`${API_URL}/api/events`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setFormData({ title: '', description: '', date: '', capacity: '' });
@@ -35,7 +37,7 @@ export default function OrganizerDashboard({ user }) {
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/api/events/${id}`, {
+      await axios.delete(`${API_URL}/api/events/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchEvents();
