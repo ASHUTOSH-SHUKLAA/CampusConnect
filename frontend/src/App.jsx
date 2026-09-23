@@ -1,49 +1,111 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
+
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+
+import LandingPage from './pages/LandingPage';
+import ExploreEvents from './pages/ExploreEvents';
 import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
+import Register from './pages/Register';
+import StudentDashboard from './pages/StudentDashboard';
 import OrganizerDashboard from './pages/OrganizerDashboard';
+import AdminDashboard from './pages/AdminDashboard';
+import Profile from './pages/Profile';
+import { Loader2 } from 'lucide-react';
 
-function App() {
-  const [user, setUser] = useState(null);
+// Protected Route Guard
+function ProtectedRoute({ children, allowedRoles }) {
+  const { user, loading, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <Loader2 className="w-8 h-8 text-indigo-600 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}
+
+function AppRoutes() {
+  const { isAuthenticated } = useAuth();
 
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-100">
-        <nav className="bg-white shadow-sm p-4">
-          <div className="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-blue-600">CampusConnect</h1>
-            {user && (
-              <button 
-                onClick={() => { localStorage.clear(); setUser(null); }}
-                className="text-gray-600 hover:text-red-500"
-              >
-                Logout ({user.name})
-              </button>
-            )}
-          </div>
-        </nav>
-        
-        <main className="max-w-6xl mx-auto p-4">
-          <Routes>
-            <Route path="/login" element={!user ? <Login setUser={setUser} /> : <Navigate to="/" />} />
-            <Route path="/" element={
-              !user ? <Navigate to="/login" /> : 
-              user.role === 'organizer' ? <OrganizerDashboard user={user} /> : 
-              <Dashboard user={user} />
-            } />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <Navbar />
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/explore" element={<ExploreEvents />} />
+          <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />} />
+          <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/dashboard" />} />
+
+          {/* Authenticated Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organizer"
+            element={
+              <ProtectedRoute allowedRoles={['organizer', 'admin']}>
+                <OrganizerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <Router>
+            <AppRoutes />
+          </Router>
+        </ToastProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
