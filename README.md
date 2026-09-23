@@ -2,7 +2,7 @@
 
 CampusConnect is a full-stack, enterprise-ready MERN platform engineered for discovering, hosting, and managing campus events. Built with modern UI/UX principles, dark mode, role-based authorization (Student, Organizer, Admin), and secure JWT authentication.
 
-**Live Demo URL:** [https://campus-connect-seven-pi.vercel.app](https://campus-connect-seven-pi.vercel.app)
+**Live Platform URL:** [https://campus-connect-seven-pi.vercel.app](https://campus-connect-seven-pi.vercel.app)
 
 ---
 
@@ -42,7 +42,7 @@ CampusConnect is a full-stack, enterprise-ready MERN platform engineered for dis
 campus-connect/
 ├── backend/
 │   ├── config/
-│   │   └── db.js                 # Database connection
+│   │   └── db.js                 # Database connection with graceful error diagnostics
 │   ├── middleware/
 │   │   ├── auth.js               # JWT verification & role guards
 │   │   └── errorHandler.js       # Centralized API error handler
@@ -60,7 +60,7 @@ campus-connect/
 │   │   ├── eventRoutes.js
 │   │   ├── registrationRoutes.js
 │   │   └── adminRoutes.js
-│   ├── server.js                 # App entry point
+│   ├── server.js                 # App entry point & health check (/api/health)
 │   ├── seed.js                   # Demo data seeder script
 │   └── .env.example
 ├── frontend/
@@ -125,6 +125,30 @@ campus-connect/
 
 ---
 
+## 🌐 Deploying to Render (Backend) & Vercel (Frontend)
+
+### Render (Backend Deployment)
+
+1. Create a **Web Service** on [Render](https://render.com) pointing to the `backend` directory.
+2. Build Command: `npm install`
+3. Start Command: `npm start`
+4. Set the following **Environment Variables** in Render Dashboard:
+   - `MONGO_URI`: Your MongoDB Atlas URI (e.g. `mongodb+srv://<username>:<password>@cluster0.xxx.mongodb.net/campusconnect?retryWrites=true&w=majority`)
+   - `JWT_SECRET`: A strong secret key (e.g. `campusconnect_super_secret_jwt_key_2026`)
+   - `NODE_ENV`: `production`
+
+> [!IMPORTANT]
+> **Fixing `bad auth : authentication failed` on MongoDB Atlas / Render:**
+> 1. In **MongoDB Atlas**, go to **Database Access** and verify your database user's username and password.
+> 2. If your password contains special characters (such as `@`, `:`, `/`, `?`, `#`), **URL encode** them in your `MONGO_URI`:
+>    - `@` $\rightarrow$ `%40`
+>    - `:` $\rightarrow$ `%3A`
+>    - `/` $\rightarrow$ `%2F`
+>    - `#` $\rightarrow$ `%23`
+> 3. Go to **Network Access** in MongoDB Atlas and ensure `0.0.0.0/0` (Allow access from anywhere) is added.
+
+---
+
 ## 🔑 Demo Login Accounts
 
 | Role | Email | Password |
@@ -134,12 +158,3 @@ campus-connect/
 | **Admin** | `admin@demo.com` | `admin123` |
 
 *(Note: The login page includes 1-click Quick Demo Fill buttons for instant testing).*
-
----
-
-## 🔒 Security Best Practices Implemented
-
-1. **Password Hashing**: Passwords stored using `bcryptjs` with salt rounds.
-2. **Server-Side Authorization**: API routes check user roles and resource ownership on `PUT`/`DELETE` endpoints.
-3. **No Secrets in Code**: Environment variables used for database connection and JWT secret keys.
-4. **Error Sanitization**: Server stack traces are stripped in production mode.

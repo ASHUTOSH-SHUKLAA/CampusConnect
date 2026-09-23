@@ -1,4 +1,4 @@
-import { Sparkles, Github, Twitter, Linkedin, Heart } from 'lucide-react';
+import { Sparkles, Heart, Globe, Share2, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
@@ -58,20 +58,20 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Social */}
+          {/* Connect */}
           <div>
             <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 uppercase tracking-wider">
               Connect
             </h4>
             <div className="flex gap-3">
-              <a href="#" className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                <Github className="w-5 h-5" />
+              <a href="#" aria-label="Website" className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Globe className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                <Twitter className="w-5 h-5" />
+              <a href="#" aria-label="Share" className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <Share2 className="w-5 h-5" />
               </a>
-              <a href="#" className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
-                <Linkedin className="w-5 h-5" />
+              <a href="#" aria-label="External Link" className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                <ExternalLink className="w-5 h-5" />
               </a>
             </div>
           </div>
